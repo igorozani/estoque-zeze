@@ -1,0 +1,25 @@
+{
+  "name": "novoProjeto-versao201548796",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.3",
+    "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
+    "express": "^4.17.1",
+    "express-handlebars": "^4.0.3",
+    "express-session": "^1.17.0",
+    "handlebars": "^4.7.6",
+    "moment": "^2.24.0",
+    "mongoose": "^5.9.5",
+    "sweetalert2": "^9.10.12"
+  }
+}

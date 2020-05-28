@@ -1,0 +1,67 @@
+<!-- Modal -->
+<div class="modal fade" id="modalAddVenda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Adicionar venda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <!-- Form -->
+        <form class="form" action="/vendas/receiver" method="POST">    
+            <div class="form-group">
+                Nome do produto <label for="nome" class="text-danger">*</label>
+                <select id="nome" name="nome" class="form-control">
+                    <option selected>Selecione o produto vendido...</option>
+                    {{#each produtos}}
+                        <option>{{nome}}</option>
+                    {{/each}}
+                </select>
+            </div> 
+            <div class="form-group">
+                Quantidade <label for="quantidade" class="text-danger">*</label>
+                <input type="number" min="1" step="1" id="quantidade" name="quantidadeVend" class="form-control" placeholder="Digite o número de unidades vendidas" required/>
+            </div>
+
+            Valor unitário <label for="valor" class="text-danger">*</label>
+            <div class="input-group mb-3">
+                <input type="text" id="precoVend" class="form-control" name="precoVend" placeholder="Digite o preço pago por cada unidade do produto pelo cliente" required/>
+                <script type="text/javascript">$("#precoVend").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+            </div>
+            
+
+            Valor pago <label for="valor" class="text-danger">*</label>
+            <div class="input-group mb-3">
+                <input type="text" id="valor" class="form-control" name="valorPago" placeholder="Digite o valor de entrada ou primeira parcela paga pelo cliente" required/>
+                <script type="text/javascript">$("#valor").maskMoney({prefix:'R$ ', thousands:'.', decimal:',', affixesStay: false});</script>
+            </div>
+            <div>
+                Data da venda <label for="data" class="text-danger">*</label>
+                <input type="date" id="data" class="form-control" name="dataVend" required/>        
+            </div>
+            <div class="form-group mt-3">
+                Nome do(a) cliente <label for="cliente" class="text-danger">*</label>
+                <input type="text" id="cliente" class="form-control" name="cliente" placeholder="Digite o nome do(a) cliente" required/>
+            </div>   
+            {{!-- <div class="form-group">
+                <label style="font-size: 1.02em" for="nome">Adicionar mais um produto:</label>
+                <a href="javascript:void(0);" onclick="sortColumn('precoVend')" class="color-order">
+                    <div class="form-control add">
+                        <svg class="icon mb-1" style="width: 1em; height: 1em;vertical-align: middle;fill: #808080 ;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M251.889 500.777l526.223 0 0 28.444L251.889 529.221 251.889 500.777 251.889 500.777zM500.777 251.889l28.444 0 0 526.223-28.444 0L500.777 251.889 500.777 251.889zM933.067 1003.067 96.932 1003.067c-38.598 0-70-31.402-70-70L26.932 96.932c0-38.598 31.402-70 70-70l836.135 0c38.598 0 70 31.402 70 70l0 836.135C1003.067 971.665 971.665 1003.067 933.067 1003.067zM96.932 60.932c-19.851 0-36 16.149-36 36l0 836.135c0 19.851 16.149 36 36 36l836.135 0c19.851 0 36-16.149 36-36L969.067 96.932c0-19.851-16.149-36-36-36L96.932 60.932z" />
+                        </svg>
+                    </div>
+                </a>
+            </div> --}}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-success">Adicionar</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+</div> 

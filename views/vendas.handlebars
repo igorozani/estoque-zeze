@@ -1,0 +1,395 @@
+<title>Vendas</title>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2">
+        <h3>Vendas</h3>
+    </div>
+     
+    <!-- Botão para acionar modal -->
+    <button type="button" data-toggle="modal" data-target="#modalAddVenda" class="btn btn-success mb-3">Adicionar</button>
+
+    <div class="card">
+
+        {{>_modalAddVenda}}
+
+        {{#if pagamento}}
+        <!-- Modal -->
+        <div class="modal fade" id="modalPagamento" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Realizar pagamento de parcela</h5>
+                <a href="/vendas">
+                    <button type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </a>
+            </div>
+
+            <div class="modal-body">
+            <!-- Form -->
+                <form class="form" action="/vendas/receiver/pagamento" method="POST">  
+                    <input type="hidden" name="id" value="{{pagamento._id}}"> 
+                    <input type="hidden" name="precoVend" value="{{pagamento.precoVend}}"> 
+                    <input type="hidden" name="quantidadeVend" value="{{pagamento.quantidadeVend}}">
+                    <input type="hidden" name="valorPago" value="{{pagamento.valorPago}}"> 
+                    <input type="hidden" name="dataVend" value="{{pagamento.dataVend}}"> 
+                    
+                    Valor pago nesta parcela <label for="valor" class="text-danger">*</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">R$</span>
+                        </div>
+                        <input type="text" class="form-control" name="parcelaPaga" placeholder="Digite o valor pago pelo cliente nesta parcela" required/>
+                        <script type="text/javascript">$("#parcelaPaga").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+                    </div>
+
+                    <div>
+                        Data da pagamento <label for="data" class="text-danger">*</label>
+                        <input type="date" class="form-control" name="dataPaga" required/>        
+                    </div>   
+                    <div class="modal-footer">
+                        <a href="/vendas">
+                            <button type="button" class="btn btn-secondary">Fechar</button>
+                        </a>
+                        <button type="submit" class="btn btn-success">Ok</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div> 
+        {{/if}}
+
+        {{#if produtoVendido}}
+        <!-- Modal -->
+        <div class="modal fade" id="modalVendido" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Marcar produto como vendido</h5>
+                <a href="/vendas">
+                    <button type="button" class="close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </a>
+            </div>
+
+            <div class="modal-body">
+            <!-- Form -->
+                <form class="form" action="/vendas/receiver/vendido" method="POST"> 
+                    <div class="form-group">
+                        Nome do produto <label for="nome" class="text-danger">*</label>
+                        <div class="form-control">{{produtoVendido.nome}}</div>
+                    </div>
+                    <div class="form-group">
+                        Quantidade <label for="quantidade" class="text-danger">*</label>
+                        <input type="number" min="1" step="1" id="quantidade" name="quantidadeVend" class="form-control" placeholder="Digite o número de unidades vendidas" required/>
+                    </div>
+                    <input type="hidden" name="nome" value="{{produtoVendido.nome}}">  
+                    <input type="hidden" name="dataVenc" value="{{produtoVendido.dataVenc}}">  
+                    <input type="hidden" name="preco" value="{{produtoVendido.preco}}"> 
+                    <input type="hidden" name="quantidade" value="{{produtoVendido.quantidade}}"> 
+                    <input type="hidden" name="id" value="{{produtoVendido._id}}"> 
+                    <input type="hidden" name="fornecedora" value="{{produtoVendido.fornecedora}}"> 
+
+                    Valor unitário <label for="valor" class="text-danger">*</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="precoVenda" class="form-control" name="precoVend" placeholder="Digite o preço pago por cada unidade do produto pelo cliente" required/>
+                        <script type="text/javascript">$("#precoVenda").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+                    </div>
+
+                    Valor pago <label for="valor" class="text-danger">*</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="valorPago" class="form-control" name="valorPago" placeholder="Digite o valor de entrada ou primeira parcela paga pelo cliente" required/>
+                        <script type="text/javascript">$("#valorPago").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+                    </div>
+
+                    <div>
+                        Data da venda <label for="data" class="text-danger">*</label>
+                        <input type="date" class="form-control" name="dataVend" required/>        
+                    </div>
+
+                    <div class="form-group mt-3">
+                        Nome do(a) cliente <label for="cliente" class="text-danger">*</label>
+                        <input type="text" id="cliente" class="form-control" name="cliente" placeholder="Digite o nome do(a) cliente" required/>
+                    </div>   
+                    {{!-- <div class="form-group">
+                        <label for="nome">Adicionar mais um produto:</label>
+                        <a href="javascript:void(0);" onclick="sortColumn('precoVend')" class="color-order">
+                            <div class="form-control add">
+                                <svg class="icon mb-1" style="width: 1em; height: 1em;vertical-align: middle;fill: #808080 ;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M251.889 500.777l526.223 0 0 28.444L251.889 529.221 251.889 500.777 251.889 500.777zM500.777 251.889l28.444 0 0 526.223-28.444 0L500.777 251.889 500.777 251.889zM933.067 1003.067 96.932 1003.067c-38.598 0-70-31.402-70-70L26.932 96.932c0-38.598 31.402-70 70-70l836.135 0c38.598 0 70 31.402 70 70l0 836.135C1003.067 971.665 971.665 1003.067 933.067 1003.067zM96.932 60.932c-19.851 0-36 16.149-36 36l0 836.135c0 19.851 16.149 36 36 36l836.135 0c19.851 0 36-16.149 36-36L969.067 96.932c0-19.851-16.149-36-36-36L96.932 60.932z" />
+                                </svg>
+                            </div>
+                        </a>
+                    </div>    --}} 
+                    <div class="modal-footer">
+                        <a href="/vendas">
+                            <button type="button" class="btn btn-secondary">Fechar</button>
+                        </a>
+                        <button type="submit" class="btn btn-success">Ok</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div> 
+        {{/if}}
+
+
+        <!-- tabela -->
+        <div class="table-responsive card-body">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 ">
+                <h5 class="font-weight-light">Histórico de vendas</h5>
+            </div>  
+            {{#each erros}}
+                <div class="alert alert-danger">{{texto}}</div>
+            {{/each}}
+            {{>_msg}}
+            
+            {{!-- busca --}}
+            <span class="algolia-autocomplete mb-4" style="position: relative; display: inline-block; direction: ltr;">
+                <input type="text" class="form-control ds-input" id="search-input" placeholder="Busca..." aria-label="Search for..."
+                    autocomplete="off" data-docs-version="4.4" spellcheck="false" role="combobox" aria-autocomplete="list"
+                    aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto"
+                    style="position: relative; vertical-align: top;">
+            </span>
+
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>
+                            Nome
+                            <a href="javascript:void(0);" onclick="sortColumn('nome')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Fornecedora
+                            <a href="javascript:void(0);" onclick="sortColumn('fornecedora')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Cliente
+                            <a href="javascript:void(0);" onclick="sortColumn('cliente')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Quantidade
+                            <a href="javascript:void(0);" onclick="sortColumn('quantidadeVend')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Data da Venda
+                            <a href="javascript:void(0);" onclick="sortColumn('dataVend')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Valor total
+                            <a href="javascript:void(0);" onclick="sortColumn('precoVend')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Valor pago
+                            <a href="javascript:void(0);" onclick="sortColumn('valorPago')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableData"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js" type="text/javascript"></script>
+    <script src="./js/buscaVenda.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#modalVendido').modal('show');
+            $('#modalPagamento').modal('show');
+        }); 
+    </script>
+    <script>
+        let sortDirection = false;
+        let aList = []
+
+        {{#each produtosVendidos}}
+        aList.push({
+            nome: '{{nome}}',
+            fornecedora: '{{fornecedora}}',
+            quantidadeVend: '{{quantidadeVend}}',
+            preco: '{{preco}}',
+            precoVend: Number({{precoVend}}) * Number({{quantidadeVend}}),
+            valorPago: '{{valorPago}}',
+            lucro: '{{lucro}}',
+            dataVend: '{{#formatDate dataVend}}{{/formatDate}}',
+            cliente: '{{cliente}}',
+            _id: '{{_id}}'
+            });
+        {{else}}
+        {{/each}}
+
+        loadTableData(aList)
+
+        function loadTableData(aList){
+            const tableBody = document.getElementById('tableData')
+            let dataHtml = ``
+            if(aList == ""){ 
+                dataHtml = 
+                `
+                    <tr align="center">
+                        <td colspan="7" class="bg-light">Nenhum dado a ser exibido</td>
+                    </tr>  
+                `
+            } else {
+                for(let produto of aList){
+
+                    function formata(n){
+                        return n.replace('.', ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")                 
+                    }
+                    
+
+                    produto.precoVend = formata(produto.precoVend.toString())
+                    produto.valorPago = formata(produto.valorPago)
+
+                    dataHtml += 
+                        `
+                            <tr id="tr-tabela" height="40">
+                                <td id="tdNome">${produto.nome}</td>
+                                <td id="tdFornecedora">${produto.fornecedora}</td>
+                                <td id="tdCliente">${produto.cliente}</td>
+                                <td>${produto.quantidadeVend}</td>
+                                <td>${produto.dataVend}</td>
+                                <td>R$ ${produto.precoVend}</td>
+                                <td>R$ ${produto.valorPago}</td>
+                                <td>
+                                    <a href="/vendas/pagamento/${produto._id}">
+                                        <button class="btn btn-sm btn-outline-success">                        
+                                            <svg class="icon pb-1" style="width: 1em; height: 1.2em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M778.249728 677.165056q0 87.422976-56.853504 150.561792t-147.704832 77.995008l0 99.9936q0 7.999488-5.142528 13.142016t-13.142016 5.142528l-77.13792 0q-7.428096 0-12.85632-5.428224t-5.428224-12.85632l0-99.9936q-37.711872-5.142528-72.85248-17.713152t-57.996288-25.426944-42.283008-27.426816-26.569728-21.4272-9.99936-10.285056q-9.713664-11.999232-1.142784-23.427072l58.853376-77.13792q3.999744-5.71392 13.142016-6.856704 8.57088-1.142784 13.713408 5.142528l1.142784 1.142784q64.567296 56.567808 138.848256 71.424 21.141504 4.571136 42.283008 4.571136 46.282752 0 81.42336-24.569856t35.140608-69.709824q0-15.998976-8.57088-30.283776t-19.141632-23.998464-33.426432-21.4272-37.711872-18.284544-45.71136-18.57024q-22.284288-9.142272-35.140608-14.2848t-35.140608-15.141888-35.712-17.713152-32.283648-20.284416-30.569472-24.28416-24.855552-27.998208-20.284416-33.140736-11.999232-37.997568-4.856832-44.568576q0-78.852096 55.996416-138.276864t145.70496-76.566528l0-102.85056q0-7.428096 5.428224-12.85632t12.85632-5.428224l77.13792 0q7.999488 0 13.142016 5.142528t5.142528 13.142016l0 100.564992q32.569344 3.428352 63.138816 13.142016t49.711104 19.141632 36.283392 21.4272 22.284288 16.570368 8.57088 7.999488q9.713664 10.285056 2.85696 21.712896l-46.282752 83.423232q-4.571136 8.57088-13.142016 9.142272-7.999488 1.714176-15.427584-3.999744-1.714176-1.714176-8.285184-6.856704t-22.284288-15.141888-33.426432-18.284544-42.568704-14.856192-48.854016-6.571008q-54.28224 0-88.56576 24.569856t-34.28352 63.424512q0 14.856192 4.856832 27.426816t16.856064 23.712768 22.569984 18.855936 31.997952 17.713152 34.569216 15.427584 39.99744 15.71328q30.283776 11.42784 46.282752 17.998848t43.425792 19.99872 43.140096 24.28416 35.426304 28.5696 30.283776 36.283392 17.998848 43.711488 7.428096 53.710848z" />
+                                            </svg>
+                                            Pagar parcela
+                                        </button>  
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                }
+                dataHtml += 
+                    `
+                        <tr id="semDados" align="center" class="invisivel">
+                            <td colspan="7" class="bg-light">Nenhum dado a ser exibido</td>
+                        </tr>  
+                    `
+            }
+            tableBody.innerHTML = dataHtml;
+        }
+
+        function sortColumn(columnName) {
+            sortDirection = !sortDirection
+            switch(columnName) {
+                case 'nome':
+                    sortStringColumn(sortDirection, columnName)
+                    break
+                case 'fornecedora': 
+                    sortStringColumn(sortDirection, columnName)
+                    break
+                case 'quantidadeVend':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'preco':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'precoVend':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'valorPago':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'lucro':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'dataVend': 
+                    sortDateColumn(sortDirection, columnName)
+                    break
+                case 'cliente': 
+                    sortStringColumn(sortDirection, columnName)
+                    break
+            }
+            loadTableData(aList)
+        }
+
+        function sortNumberColumn(sort, columnName){
+            aList = aList.sort((p1, p2) => {
+                return sort ? p1[columnName] - p2[columnName] : p2[columnName] - p1[columnName]
+            })
+        }
+
+        function sortStringColumn(sort, columnName) {
+            function compare(a, b) {
+            // Use toUpperCase() to ignore character casing
+            const pA = a[columnName].toUpperCase();
+            const pB = b[columnName].toUpperCase();
+
+            let comparison = 0;
+            if (pA > pB) {
+                comparison = 1;
+            } else if (pA < pB) {
+                comparison = -1;
+            }
+            return sort ? comparison : comparison * -1
+            }
+
+            aList.sort(compare)
+        }
+
+        function sortDateColumn(sort, columnName){
+            aList.sort(function(a, b) {
+                console.log(a[columnName])
+                var dateA = new Date(a[columnName]), dateB = new Date(b[columnName]);
+                return sort ? dateA - dateB : dateB - dateA
+            })
+        }
+    </script>
+</main>

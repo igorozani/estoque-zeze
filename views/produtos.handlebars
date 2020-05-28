@@ -1,0 +1,333 @@
+<title>Produtos</title>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">  
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2">
+        <h3>Produtos</h3>
+    </div>
+
+    <!-- Botão para acionar modal -->
+    <button type="button" data-toggle="modal" data-target="#modalAdd" class="btn btn-success mb-3">Adicionar</button>
+
+    <div class="card">
+
+        {{>_modalAdd}}
+
+        {{#if produto}}
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-lg" data-backdrop="static" id="exampleModal"tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Editar produtos</h5>
+                        <a href="/produtos">
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </a>
+                    </div>
+                    <div class="modal-body">
+
+                    <!-- Forms de edição -->
+                    <form class="form" action="/produtos/receiver/edit" method="POST">  
+                        <input type="hidden" name="id" value="{{produto._id}}">   
+                        <div class="form-group">
+                            Nome do produto <label for="nome" class="text-danger">*</label>
+                            <input type="text" id="nome2" class="form-control" name="nome" placeholder="Digite o nome do produto" required value="{{produto.nome}}"/>
+                        </div> 
+
+                        <div class="form-group">
+                            Fornecedora do produto <label for="fornecedora" class="text-danger">*</label>
+                            <input type="text" id="fornecedora2" class="form-control" name="fornecedora" placeholder="Digite a fornecedora do produto" required value="{{produto.fornecedora}}"/>
+                        </div> 
+                 
+                        <div class="form-group">
+                            Quantidade <label for="quantidade" class="text-danger">*</label>
+                            <input type="number" min="1" step="1" id="quantidade2" name="quantidade" class="form-control" placeholder="Digite o número de unidades" required value="{{produto.quantidade}}"/>
+                        </div>
+
+                        Preço de custo <label for="valor" class="text-danger">*</label>
+                        <div class="input-group mb-3">
+                            <input type="text" id="preco2" class="form-control" name="preco" placeholder="R$ {{preco}}"/>
+                            <script type="text/javascript">$("#preco2").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+                        </div>
+
+                        <div>
+                            <label for="descricao">Descrição do produto:</label>
+                            <textarea class="form-control" id="textarea" name="descricao" rows="5"></textarea>        
+                        </div>
+                        <div class="modal-footer">
+                            <a href="/produtos">
+                                <button type="button" class="btn btn-secondary">Fechar</button>
+                            </a>
+                            <button type="submit" class="btn btn-success">Salvar mudanças</button>
+                        </div>
+                    </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+
+
+        <!-- tabela -->
+        <div class="table-responsive card-body">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center  pb-2 ">
+                <h5 class="font-weight-light">Gerenciar produtos</h5>
+            </div>  
+            {{#each erros}}
+                <div class="alert alert-danger">{{texto}}</div>
+            {{else}}
+
+            {{/each}}
+            {{>_msg}}
+
+            {{!-- busca --}}
+            <span class="algolia-autocomplete mb-4" style="position: relative; display: inline-block; direction: ltr;">
+                <input type="text" class="form-control ds-input" id="search-input" placeholder="Busca..." aria-label="Search for..."
+                    autocomplete="off" data-docs-version="4.4" spellcheck="false" role="combobox" aria-autocomplete="list"
+                    aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto"
+                    style="position: relative; vertical-align: top;">
+            </span> 
+
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>
+                            Nome
+                            <a href="javascript:void(0);" onclick="sortColumn('nome')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>
+                        </th>
+                        <th>
+                            Fornecedora
+                            <a href="javascript:void(0);" onclick="sortColumn('fornecedora')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>    
+                        </th>
+                        <th>
+                            Quantidade
+                            <a href="javascript:void(0);" onclick="sortColumn('quantidade')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>    
+                        </th>
+                        <th>
+                            Preço de custo
+                            <a href="javascript:void(0);" onclick="sortColumn('preco')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>    
+                        </th>
+                        <th>
+                            Descrição
+                            <a href="javascript:void(0);" onclick="sortColumn('descricao')" style="float:right;" class="color-order">
+                                <svg class="bi bi-arrow-up-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M11 3.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10.646 2.646a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L11 3.707 8.354 6.354a.5.5 0 11-.708-.708l3-3zm-9 7a.5.5 0 01.708 0L5 12.293l2.646-2.647a.5.5 0 11.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 2.5a.5.5 0 01.5.5v9a.5.5 0 01-1 0V3a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
+                                </svg>
+                            </a>    
+                        </th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tableData"></tbody>
+            </table>
+        </div>  
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="js/buscaProduto.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        function putLineBreaks(str) { 
+            return str.replace(/###/g, '\r\n');
+        } 
+
+        function formata(n){
+            return n.replace('.', ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".")                 
+        }
+
+        
+        $(document).ready(function(){
+            $('#exampleModal').modal('show');
+            {{#if produto}}
+                var content = putLineBreaks('{{produto.descricao}}')
+                $("#textarea").val(content);
+            {{/if}}
+        })
+
+    </script>
+    <script>
+        let sortDirection = false;
+        let aList = []
+
+        {{#each produtos}}
+            aList.push({
+                nome: '{{nome}}',
+                fornecedora: '{{fornecedora}}',
+                quantidade: '{{quantidade}}',
+                preco: '{{preco}}',
+                descricao: '{{descricao}}',
+                _id: '{{_id}}'
+                });
+        {{/each}}
+
+        loadTableData(aList)
+
+        function loadTableData(aList){
+            const tableBody = document.getElementById('tableData')
+            let dataHtml = ``
+            if(aList == ""){ 
+                dataHtml = 
+                `
+                    <tr align="center">
+                        <td colspan="6" class="bg-light">Nenhum dado a ser exibido</td>
+                    </tr>  
+                `
+            } else {
+                for(let produto of aList){
+
+                    produto.preco = formata(produto.preco)
+                    
+                    produto.descricao = putLineBreaks(produto.descricao)
+                    
+                    dataHtml += 
+                        `
+                            <tr id="tr-tabela">
+                                <td id="tdNome">${produto.nome}</td>
+                                <td id="tdFornecedora">${produto.fornecedora}</td>
+                                <td>${produto.quantidade}</td>
+                                <td>R$ ${produto.preco}</td>
+                                <td>${produto.descricao}</td>
+                                <td>
+                                    <a href="/vendas/vendido/${produto._id}">
+                                        <button class="btn btn-sm btn-outline-success" type="button" data-toggle="modal" data-target="#modalVendido">
+                                            <svg class="icon pb-1" style="width: 1em; height: 1.2em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M778.249728 677.165056q0 87.422976-56.853504 150.561792t-147.704832 77.995008l0 99.9936q0 7.999488-5.142528 13.142016t-13.142016 5.142528l-77.13792 0q-7.428096 0-12.85632-5.428224t-5.428224-12.85632l0-99.9936q-37.711872-5.142528-72.85248-17.713152t-57.996288-25.426944-42.283008-27.426816-26.569728-21.4272-9.99936-10.285056q-9.713664-11.999232-1.142784-23.427072l58.853376-77.13792q3.999744-5.71392 13.142016-6.856704 8.57088-1.142784 13.713408 5.142528l1.142784 1.142784q64.567296 56.567808 138.848256 71.424 21.141504 4.571136 42.283008 4.571136 46.282752 0 81.42336-24.569856t35.140608-69.709824q0-15.998976-8.57088-30.283776t-19.141632-23.998464-33.426432-21.4272-37.711872-18.284544-45.71136-18.57024q-22.284288-9.142272-35.140608-14.2848t-35.140608-15.141888-35.712-17.713152-32.283648-20.284416-30.569472-24.28416-24.855552-27.998208-20.284416-33.140736-11.999232-37.997568-4.856832-44.568576q0-78.852096 55.996416-138.276864t145.70496-76.566528l0-102.85056q0-7.428096 5.428224-12.85632t12.85632-5.428224l77.13792 0q7.999488 0 13.142016 5.142528t5.142528 13.142016l0 100.564992q32.569344 3.428352 63.138816 13.142016t49.711104 19.141632 36.283392 21.4272 22.284288 16.570368 8.57088 7.999488q9.713664 10.285056 2.85696 21.712896l-46.282752 83.423232q-4.571136 8.57088-13.142016 9.142272-7.999488 1.714176-15.427584-3.999744-1.714176-1.714176-8.285184-6.856704t-22.284288-15.141888-33.426432-18.284544-42.568704-14.856192-48.854016-6.571008q-54.28224 0-88.56576 24.569856t-34.28352 63.424512q0 14.856192 4.856832 27.426816t16.856064 23.712768 22.569984 18.855936 31.997952 17.713152 34.569216 15.427584 39.99744 15.71328q30.283776 11.42784 46.282752 17.998848t43.425792 19.99872 43.140096 24.28416 35.426304 28.5696 30.283776 36.283392 17.998848 43.711488 7.428096 53.710848z" />
+                                            </svg>
+                                            Realizar venda
+                                        </button>   
+                                    </a>
+                                    
+                                    <a href="/produtos/edit/${produto._id}">
+                                        <button class="btn btn-sm btn-outline-primary">                                         
+                                            <svg class="icon pb-1" style="width: 1em; height: 1.2em;vertical-align: middle;fill:currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M80.323397 958.025403c-9.185196 1.695618-17.166985-6.446829-15.288195-15.597233l48.28982-235.249909c1.288343-6.274914 9.036817-8.599865 13.56597-4.070712l197.129706 197.123566c4.581342 4.581342 2.143826 12.421914-4.227278 13.597693L80.323397 958.025403zM666.200988 142.702096l218.518852 218.500433 57.325613-57.32152c22.4892-22.488177 22.490224-58.950623 0.001023-81.4388L804.972565 85.37239c-22.487154-22.487154-58.94653-22.487154-81.434707-0.001023L666.200988 142.702096zM383.824759 862.081237l451.918623-451.894064L617.229646 191.672414 165.305907 643.582851 383.824759 862.081237z" />
+                                            </svg>
+                                            Editar
+                                        </button>
+                                    </a>
+
+
+                                    <a href="javascript:void(0);" onclick="sweetalertclick('${produto._id}');">
+                                        <button class="btn btn-sm btn-outline-danger">  
+                                            <svg class="icon pb-1" style="width: 1em; height: 1.2em;vertical-align: middle;fill:currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M402.267136 786.300928l0-402.259968q0-7.999488-5.142528-13.142016t-13.142016-5.142528l-36.569088 0q-7.999488 0-13.142016 5.142528t-5.142528 13.142016l0 402.259968q0 7.999488 5.142528 13.142016t13.142016 5.142528l36.569088 0q7.999488 0 13.142016-5.142528t5.142528-13.142016zm146.276352 0l0-402.259968q0-7.999488-5.142528-13.142016t-13.142016-5.142528l-36.569088 0q-7.999488 0-13.142016 5.142528t-5.142528 13.142016l0 402.259968q0 7.999488 5.142528 13.142016t13.142016 5.142528l36.569088 0q7.999488 0 13.142016-5.142528t5.142528-13.142016zm146.276352 0l0-402.259968q0-7.999488-5.142528-13.142016t-13.142016-5.142528l-36.569088 0q-7.999488 0-13.142016 5.142528t-5.142528 13.142016l0 402.259968q0 7.999488 5.142528 13.142016t13.142016 5.142528l36.569088 0q7.999488 0 13.142016-5.142528t5.142528-13.142016zm-310.837248-566.820864l255.983616 0-27.426816-66.852864q-3.999744-5.142528-9.713664-6.285312l-181.131264 0q-5.71392 1.142784-9.713664 6.285312zm530.251776 18.284544l0 36.569088q0 7.999488-5.142528 13.142016t-13.142016 5.142528l-54.853632 0 0 541.679616q0 47.425536-26.855424 81.994752t-64.567296 34.569216l-475.398144 0q-37.711872 0-64.567296-33.426432t-26.855424-80.851968l0-543.965184-54.853632 0q-7.999488 0-13.142016-5.142528t-5.142528-13.142016l0-36.569088q0-7.999488 5.142528-13.142016t13.142016-5.142528l176.560128 0 39.99744-95.422464q8.57088-21.141504 30.855168-35.997696t45.139968-14.856192l182.84544 0q22.85568 0 45.139968 14.856192t30.855168 35.997696l39.99744 95.422464 176.560128 0q7.999488 0 13.142016 5.142528t5.142528 13.142016z" />
+                                            </svg>
+                                            Deletar
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                }
+                dataHtml += 
+                    `
+                        <tr id="semDados" align="center" class="invisivel">
+                            <td colspan="6" class="bg-light">Nenhum dado a ser exibido</td>
+                        </tr>  
+                    `
+            }
+            tableBody.innerHTML = dataHtml;
+        }
+
+        function sortColumn(columnName) {
+            sortDirection = !sortDirection
+            switch(columnName) {
+                case 'nome':
+                    sortStringColumn(sortDirection, columnName)
+                    break
+                case 'fornecedora': 
+                    sortStringColumn(sortDirection, columnName)
+                    break
+                case 'quantidade':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'preco':
+                    sortNumberColumn(sortDirection, columnName)
+                    break
+                case 'descricao': 
+                    sortStringColumn(sortDirection, columnName)
+                    break
+            }
+            loadTableData(aList)
+        }
+
+        function sortNumberColumn(sort, columnName){
+            aList = aList.sort((p1, p2) => {
+                return sort ? p1[columnName] - p2[columnName] : p2[columnName] - p1[columnName]
+            })
+        }
+
+        function sortStringColumn(sort, columnName) {
+            function compare(a, b) {
+            // Use toUpperCase() to ignore character casing
+            const pA = a[columnName].toUpperCase();
+            const pB = b[columnName].toUpperCase();
+
+            let comparison = 0;
+            if (pA > pB) {
+                comparison = 1;
+            } else if (pA < pB) {
+                comparison = -1;
+            }
+            return sort ? comparison : comparison * -1
+            }
+
+            aList.sort(compare)
+        }
+
+        function sortDateColumn(sort, columnName){
+            aList.sort(function(a, b) {
+                var dateA = new Date(a[columnName]), dateB = new Date(b[columnName]);
+                return sort ? dateA - dateB : dateB - dateA
+            })
+        }
+    </script>
+    <script>
+        function sweetalertclick(id){
+            Swal.fire({
+                title: 'Você tem certeza?',
+                text: "Não há como reverter esta ação!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, deletar item!'
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href = "/produtos/delete/" + id
+                }
+            })
+        }
+    </script>
+</main>
