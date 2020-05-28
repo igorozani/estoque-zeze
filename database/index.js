@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
+const db = require("../config/db")
 
 // Conexão com o bd mongoDB
-mongoose.connect('mongodb://localhost/estoque', {
+mongoose.connect(db.mongoUri , {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false 
