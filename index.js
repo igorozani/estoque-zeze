@@ -60,6 +60,18 @@ const ProdutoVendido = require('./models/ProdutoVendido')
         app.use(bodyParser.urlencoded({ extended: false }))
         app.use(bodyParser.json())    
 
+    // Instaciar Total de Produtos (estatisticas)
+        const totalProdutos = {
+            quantidade: 0,
+            clientes: 0,
+            senha: "paonachapa",
+            precoEstoque: 0,
+        }
+
+        new TotalProdutos(totalProdutos).save().then().catch(erro => {
+            console.log(erro)
+        })
+
 // Public
     app.use(express.static('views'));       
 
@@ -68,8 +80,8 @@ const ProdutoVendido = require('./models/ProdutoVendido')
         sidebar_select = "home"
         TotalProdutos.findOne({senha: "paonachapa"}).then(total_produtos => {
             ProdutoVendido.find().then(produtosVendidos => {
-                // res.render('index', {total_produtos: total_produtos.quantidade, total_clientes: total_produtos.clientes, total_preco: total_produtos.precoEstoque, produtosVendidos: produtosVendidos})
-                res.render('index', {produtosVendidos: produtosVendidos})
+                res.render('index', {total_produtos: total_produtos.quantidade, total_clientes: total_produtos.clientes, total_preco: total_produtos.precoEstoque, produtosVendidos: produtosVendidos})
+                // res.render('index', {produtosVendidos: produtosVendidos})
             })
         }).catch(erro => {
             console.log(erro)
