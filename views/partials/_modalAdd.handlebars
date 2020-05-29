@@ -30,7 +30,11 @@
             Preço de custo <label for="valor" class="text-danger">*</label>
             <div class="input-group mb-3">                
                 <input type="text" id="preco" class="form-control" name="preco" placeholder="R$ 0,00" required/>
-                <script type="text/javascript">$("#preco").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});</script>
+                <script type="text/javascript">
+                $(function() {
+                    $("#preco").maskMoney({prefix:'R$ ', thousands:'.', decimal:','});
+                })
+                </script>
             </div>
 
             <div>
